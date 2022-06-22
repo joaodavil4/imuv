@@ -5,8 +5,13 @@ object Queries {
 """
     query GetMoviesQuery {
   movies {
+    id
     title
+    overview
+    posterPath
+    popularity
     releaseDate
+    genres
   }
 }
 """

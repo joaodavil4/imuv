@@ -12,20 +12,24 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight.Companion.Bold
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.annotation.ExperimentalCoilApi
+import coil.compose.rememberAsyncImagePainter
+import coil.compose.rememberImagePainter
+import coil.request.ImageRequest
 import com.podium.technicalchallenge.R
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalCoilApi::class)
 @Composable
 fun CardItem(
-    image: Painter,
+    imageUrl: String?,
     title: String,
     description: String,
-    footerText: String = "",
     tags: List<String>?,
     onCardClick: () -> Unit,
 ){
@@ -38,10 +42,22 @@ fun CardItem(
             }),
         shape = RoundedCornerShape(10.dp),
     ) {
+
+        val painter = if (imageUrl != null) {
+            rememberAsyncImagePainter(
+                ImageRequest.Builder(LocalContext.current).data(data = imageUrl).apply(block = fun ImageRequest.Builder.() {
+                    crossfade(true)
+                    placeholder(R.drawable.ic_movie_placeholder)
+                }).build()
+            )
+        } else {
+            painterResource(id = R.drawable.ic_movie_placeholder)
+        }
+
         Image(
             modifier = Modifier.fillMaxWidth(),
-            painter = image,
-            contentScale = ContentScale.FillWidth,
+            painter = painter,
+            contentScale = ContentScale.None,
             contentDescription = null
         )
 
@@ -51,9 +67,6 @@ fun CardItem(
 
             Spacer(modifier = Modifier.height(8.dp))
             Text(text = description)
-
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(text = footerText)
 
             tags?.let{
                 Row(
@@ -79,7 +92,7 @@ fun CardItem(
 @Composable
 fun GreenMovie(){
     CardItem(
-        image = painterResource(id = R.drawable.ic_launcher_background),
+        imageUrl = null,
         title = "Android Strikes Back",
         description = "A long time ago in a galaxy far, far away...",
         tags = listOf("AndroidWars", "The Return of Apple")) {

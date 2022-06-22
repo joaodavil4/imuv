@@ -46,10 +46,10 @@ fun MovieList(
             ) {
                 items(movies){ item ->
                     CardItem(
-                        image = painterResource(id = R.drawable.ic_launcher_background) ,
+                        imageUrl = item.posterPath,
                         title = item.title,
-                        description = "desc",
-                        tags = listOf("Teste")
+                        description = item.overview,
+                        tags = item.genres
                     ) {
                     }
                 }

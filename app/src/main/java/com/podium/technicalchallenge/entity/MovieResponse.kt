@@ -9,7 +9,25 @@ data class Movies(
 )
 
 data class MovieEntity(
+    val id: Int,
     val title: String,
-    val description: String,
-    val releaseDate: String
+    val overview: String,
+    val popularity: Float,
+    val genres: List<String>,
+    val posterPath: String,
+    val releaseDate: String,
+    val cast: CastEntity,
+    val director: DirectorEntity
+)
+
+data class CastEntity(
+    val profilePath: String,
+    val name: String,
+    val character: String,
+    val order: Int,
+)
+
+data class DirectorEntity(
+    val id: Int,
+    val name: String,
 )

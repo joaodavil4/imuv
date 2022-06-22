@@ -34,7 +34,6 @@ class MovieViewModel : ViewModel() {
             }
             when (result) {
                 is Result.Success<List<MovieEntity>?> -> {
-
                     _items.postValue(result.data)
                     Log.d(TAG, "movies= " + result.data)
                 }
