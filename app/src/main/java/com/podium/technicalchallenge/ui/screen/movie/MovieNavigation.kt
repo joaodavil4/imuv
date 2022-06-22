@@ -1,6 +1,7 @@
 package com.podium.technicalchallenge.ui.screen.movie
 
 import androidx.compose.runtime.Composable
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -11,9 +12,10 @@ import com.podium.technicalchallenge.ui.navigation.NavDestinations
 fun MovieNavigation(
     navController: NavHostController = rememberNavController()
 ){
+    val viewModel = viewModel<MovieViewModel>()
     NavHost(navController = navController, startDestination = NavDestinations.MOVIE_LIST) {
         composable(NavDestinations.MOVIE_LIST) {
-            MovieList()
+            MovieList(viewModel)
         }
     }
 }

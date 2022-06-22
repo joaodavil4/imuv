@@ -10,5 +10,6 @@ data class Movies(
 
 data class MovieEntity(
     val title: String,
+    val description: String,
     val releaseDate: String
 )
