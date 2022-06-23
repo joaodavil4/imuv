@@ -1,15 +1,9 @@
 package com.podium.technicalchallenge.ui.screen.movie
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SmallTopAppBar
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -26,35 +20,59 @@ import com.podium.technicalchallenge.ui.components.CardItem
 fun MovieList(
     viewModel: MovieViewModel
 ) {
+    val isRefreshing by viewModel.isRefreshing.observeAsState(false)
+    val movies by viewModel.items.observeAsState(listOf())
+    val top5 by viewModel.top5Filter.observeAsState(false)
+    viewModel.refresh()
+
     Scaffold(
-        topBar = {
-            SmallTopAppBar(title = { Text(text = "Movies") })
-        }
-    ) {
-        val isRefreshing by viewModel.isRefreshing.observeAsState(false)
-        val movies by viewModel.items.observeAsState(listOf())
+        topBar = { SmallTopAppBar(title = { Text(text = "Movies") }) },
+        content = {
 
-        viewModel.refresh()
-
-        SwipeRefresh(
-            state = rememberSwipeRefreshState(isRefreshing),
-            onRefresh = { viewModel.refresh() }
-        ) {
-            LazyColumn(
-                modifier = Modifier.fillMaxSize().padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(16.dp),
             ) {
-                items(movies){ item ->
-                    CardItem(
-                        imageUrl = item.posterPath,
-                        title = item.title,
-                        description = item.overview,
-                        tags = item.genres
+
+                Spacer(modifier = Modifier.height(40.dp))
+
+
+                FilterChip(
+                    label = { Text(text = "Top 5") },
+                    onClick = { viewModel.filterTop5()},
+                    leadingIcon = {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_check),
+                            modifier = Modifier.wrapContentSize(),
+                            contentDescription = null,
+                        )
+                    },
+                    selected = !top5,
+                )
+
+                SwipeRefresh(
+                    state = rememberSwipeRefreshState(isRefreshing),
+                    onRefresh = { viewModel.refresh() }
+                ) {
+
+
+                    LazyColumn(
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
+                        items(movies) { item ->
+                            CardItem(
+                                imageUrl = item.posterPath,
+                                title = item.title,
+                                description = item.overview,
+                                tags = item.genres
+                            ) {
+                            }
+                        }
                     }
                 }
             }
         }
+    )
 
-    }
 }

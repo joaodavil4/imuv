@@ -16,6 +16,17 @@ class MovieViewModel : ViewModel() {
 
     var isRefreshing = MutableLiveData(false)
 
+    private val resetQuery = "limit: 10"
+    private var filter = resetQuery
+    fun setFilter(newFilter: String){
+        filter = newFilter
+    }
+
+
+    private val _top5Filter = MutableLiveData<Boolean>()
+    val top5Filter: LiveData<Boolean>
+        get() = _top5Filter
+
     private val _items = MutableLiveData<List<MovieEntity>>(listOf())
     val items: LiveData<List<MovieEntity>>
         get() = _items
@@ -25,10 +36,23 @@ class MovieViewModel : ViewModel() {
         getMovies()
     }
 
+    private val top5query = "limit: 5, orderBy: \"popularity\""
+    fun filterTop5(){
+        _top5Filter.value = _top5Filter.value != true
+        filter = if(_top5Filter.value == true){
+            top5query
+        } else {
+            resetQuery
+        }
+        refresh()
+    }
+
+
     private fun getMovies() {
+
         viewModelScope.launch(Dispatchers.IO) {
             val result = try {
-                Repo.getInstance().getMovies()
+                Repo.getInstance().getMovies(filter)
             } catch (e: Exception) {
                 Result.Error(e)
             }

@@ -1,10 +1,10 @@
 package com.podium.technicalchallenge.network.queries
 
 object Queries {
-    fun getMoviesQuery() =
+    fun getMoviesQuery(filter: String?) =
 """
     query GetMoviesQuery {
-  movies {
+  movies (${filter?:""}){
     id
     title
     overview

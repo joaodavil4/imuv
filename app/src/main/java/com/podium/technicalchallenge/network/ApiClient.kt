@@ -1,5 +1,6 @@
 package com.podium.technicalchallenge.network
 
+import com.podium.technicalchallenge.AuthorizationInterceptor
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.scalars.ScalarsConverterFactory
@@ -19,7 +20,7 @@ class ApiClient {
     fun provideRetrofitClient(): Retrofit {
         return Retrofit
             .Builder()
-            .client(OkHttpClient.Builder().build())
+            .client(OkHttpClient.Builder().addInterceptor(AuthorizationInterceptor()).build())
             .baseUrl(API_URL)
             .addConverterFactory(ScalarsConverterFactory.create())
             .build()

@@ -16,10 +16,10 @@ sealed class Result<out R> {
 
 class Repo {
 
-    suspend fun getMovies(): Result<List<MovieEntity>?> {
+    suspend fun getMovies(filter: String?): Result<List<MovieEntity>?> {
         val paramObject = JSONObject()
         paramObject.put(
-            "query", Queries.getMoviesQuery()
+            "query", Queries.getMoviesQuery(filter)
         )
 
         val response = ApiClient.getInstance().provideRetrofitClient().create(GraphQLService::class.java).postGetMovies(paramObject.toString())
