@@ -25,11 +25,11 @@ class MovieViewModel : ViewModel() {
         filter = newFilter
     }
 
-    var genres2 = ""
     private val _genres = MutableLiveData<List<String>>()
     val genres: LiveData<List<String>>
         get() = _genres
 
+    val selectedFilter = MutableLiveData<String>()
     val selectedGenre = MutableLiveData<String>()
 
     private val _top5Filter = MutableLiveData<Boolean>()
@@ -47,10 +47,13 @@ class MovieViewModel : ViewModel() {
 
     private val top5query = "limit: 5, orderBy: \"popularity\""
     fun filterTop5(){
+
         _top5Filter.value = _top5Filter.value != true
         filter = if(_top5Filter.value == true){
+            selectedFilter.value = "Top 5"
             top5query
         } else {
+            selectedFilter.value = "All"
             resetQuery
         }
         refresh()
@@ -60,6 +63,8 @@ class MovieViewModel : ViewModel() {
         if(selectedGenre.value != genre){
             selectedGenre.value = genre
             refresh()
+        } else {
+            selectedGenre.value = ""
         }
     }
 

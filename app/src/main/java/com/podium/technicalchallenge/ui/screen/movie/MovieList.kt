@@ -24,7 +24,9 @@ fun MovieList(
 ) {
     val isRefreshing by viewModel.isRefreshing.observeAsState(false)
     val movies by viewModel.items.observeAsState(listOf())
+    val filters = listOf("Top 5", "All")
 
+    val selectedFilter by viewModel.selectedFilter.observeAsState("All")
     val selectedGenre by viewModel.selectedGenre.observeAsState("")
     val genres by viewModel.genres.observeAsState(listOf())
     val top5 by viewModel.top5Filter.observeAsState(false)
@@ -60,19 +62,24 @@ fun MovieList(
                     }
                 }
 
-
-                FilterChip(
-                    label = { Text(text = "Top 5") },
-                    onClick = { viewModel.filterTop5()},
-                    leadingIcon = {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_check),
-                            modifier = Modifier.wrapContentSize(),
-                            contentDescription = null,
+                LazyRow(state = rememberLazyListState(), horizontalArrangement = Arrangement.spacedBy(4.dp)){
+                    items(filters){ item ->
+                        FilterChip(
+                            label = { Text(text = item) },
+                            onClick = { viewModel.filterTop5()},
+                            leadingIcon = {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.ic_check),
+                                    modifier = Modifier.wrapContentSize(),
+                                    contentDescription = null,
+                                )
+                            },
+                            selected = !selectedFilter.equals(item),
                         )
-                    },
-                    selected = !top5,
-                )
+                    }
+                }
+
+
 
                 SwipeRefresh(
                     state = rememberSwipeRefreshState(isRefreshing),
