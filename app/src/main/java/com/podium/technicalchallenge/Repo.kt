@@ -1,8 +1,7 @@
 package com.podium.technicalchallenge
 
 import com.google.gson.Gson
-import com.podium.technicalchallenge.entity.MovieEntity
-import com.podium.technicalchallenge.entity.MovieResponse
+import com.podium.technicalchallenge.entity.*
 import com.podium.technicalchallenge.network.ApiClient
 import com.podium.technicalchallenge.network.queries.Queries
 import com.podium.technicalchallenge.network.retrofit.GraphQLService
@@ -27,6 +26,22 @@ class Repo {
         val data = Gson().fromJson(jsonBody, MovieResponse::class.java)
         return if (data != null) {
             Result.Success(data.data.movies)
+        } else {
+            Result.Error(java.lang.Exception())
+        }
+    }
+
+    suspend fun getGenres(): Result<List<String>?> {
+        val paramObject = JSONObject()
+        paramObject.put(
+            "query", Queries.getGenresQuery()
+        )
+
+        val response = ApiClient.getInstance().provideRetrofitClient().create(GraphQLService::class.java).postGetGenres(paramObject.toString())
+        val jsonBody = response.body()
+        val data = Gson().fromJson(jsonBody, GenreResponse::class.java)
+        return if (data != null) {
+            Result.Success(data.data.genres)
         } else {
             Result.Error(java.lang.Exception())
         }

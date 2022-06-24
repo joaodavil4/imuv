@@ -9,4 +9,8 @@ interface GraphQLService {
     @Headers("Content-Type: application/json")
     @POST("graphql")
     suspend fun postGetMovies(@Body body: String): Response<String>
+
+    @Headers("Content-Type: application/json")
+    @POST("graphql")
+    suspend fun postGetGenres(@Body body: String): Response<String>
 }

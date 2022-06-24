@@ -15,4 +15,11 @@ object Queries {
   }
 }
 """
+
+    fun getGenresQuery() =
+        """
+    query GetGenresQuery {
+        genres
+    }
+"""
 }

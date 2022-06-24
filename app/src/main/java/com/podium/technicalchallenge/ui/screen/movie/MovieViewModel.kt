@@ -18,10 +18,19 @@ class MovieViewModel : ViewModel() {
 
     private val resetQuery = "limit: 10"
     private var filter = resetQuery
+    private fun getFilter(): String {
+        return filter + if(selectedGenre.value?.isNotEmpty() == true) ", genre: \"${selectedGenre.value}\"" else ""
+    }
     fun setFilter(newFilter: String){
         filter = newFilter
     }
 
+    var genres2 = ""
+    private val _genres = MutableLiveData<List<String>>()
+    val genres: LiveData<List<String>>
+        get() = _genres
+
+    val selectedGenre = MutableLiveData<String>()
 
     private val _top5Filter = MutableLiveData<Boolean>()
     val top5Filter: LiveData<Boolean>
@@ -47,12 +56,19 @@ class MovieViewModel : ViewModel() {
         refresh()
     }
 
+    fun filterGenre(genre: String){
+        if(selectedGenre.value != genre){
+            selectedGenre.value = genre
+            refresh()
+        }
+    }
+
 
     private fun getMovies() {
 
         viewModelScope.launch(Dispatchers.IO) {
             val result = try {
-                Repo.getInstance().getMovies(filter)
+                Repo.getInstance().getMovies(getFilter())
             } catch (e: Exception) {
                 Result.Error(e)
             }
@@ -63,6 +79,27 @@ class MovieViewModel : ViewModel() {
                 }
                 else -> {
                     Log.e(TAG, "movies= " + result)
+                }
+            }
+            isRefreshing.postValue(false)
+        }
+    }
+
+    fun getGenres() {
+
+        viewModelScope.launch(Dispatchers.IO) {
+            val result = try {
+                Repo.getInstance().getGenres()
+            } catch (e: Exception) {
+                Result.Error(e)
+            }
+            when (result) {
+                is Result.Success<List<String>?> -> {
+                    _genres.postValue(result.data)
+                    Log.d(TAG, "genres= " + result.data)
+                }
+                else -> {
+                    Log.e(TAG, "genres= " + result)
                 }
             }
             isRefreshing.postValue(false)
