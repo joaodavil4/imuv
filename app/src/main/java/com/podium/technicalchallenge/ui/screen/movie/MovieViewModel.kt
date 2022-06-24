@@ -21,9 +21,6 @@ class MovieViewModel : ViewModel() {
     private fun getFilter(): String {
         return filter + if(selectedGenre.value?.isNotEmpty() == true) ", genre: \"${selectedGenre.value}\"" else ""
     }
-    fun setFilter(newFilter: String){
-        filter = newFilter
-    }
 
     private val _genres = MutableLiveData<List<String>>()
     val genres: LiveData<List<String>>
@@ -31,6 +28,7 @@ class MovieViewModel : ViewModel() {
 
     val selectedFilter = MutableLiveData<String>()
     val selectedGenre = MutableLiveData<String>()
+    val selectedEntity = MutableLiveData<MovieEntity>()
 
     private val _top5Filter = MutableLiveData<Boolean>()
     val top5Filter: LiveData<Boolean>
@@ -65,6 +63,33 @@ class MovieViewModel : ViewModel() {
             refresh()
         } else {
             selectedGenre.value = ""
+        }
+    }
+
+    fun loadDetails(){
+        getMovie()
+    }
+
+    private fun getMovie() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val result = try {
+                Repo.getInstance().getMovie(selectedEntity.value?.id.toString())
+            } catch (e: Exception) {
+                Result.Error(e)
+            }
+            when (result) {
+                is Result.Success<MovieEntity?> -> {
+                    val entity = selectedEntity.value
+                    entity?.cast = result.data?.cast!!
+                    entity?.director = result.data.director
+
+                    selectedEntity.postValue(entity)
+                }
+                else -> {
+                    Log.e(TAG, "movies= " + result)
+                }
+            }
+            isRefreshing.postValue(false)
         }
     }
 

@@ -1,7 +1,15 @@
 package com.podium.technicalchallenge.entity
 
-data class MovieResponse(
+data class MoviesResponse(
     val data: Movies
+)
+
+data class MovieResponse(
+    val data: Movie
+)
+
+data class Movie(
+    val movie: MovieEntity
 )
 
 data class Movies(
@@ -16,8 +24,8 @@ data class MovieEntity(
     val genres: List<String>,
     val posterPath: String,
     val releaseDate: String,
-    val cast: CastEntity,
-    val director: DirectorEntity
+    var cast: List<CastEntity>,
+    var director: DirectorEntity
 )
 
 data class CastEntity(

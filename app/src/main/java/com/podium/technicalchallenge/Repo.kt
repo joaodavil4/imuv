@@ -15,6 +15,22 @@ sealed class Result<out R> {
 
 class Repo {
 
+    suspend fun getMovie(id: String): Result<MovieEntity?> {
+        val paramObject = JSONObject()
+        paramObject.put(
+            "query", Queries.getMovieQuery(id)
+        )
+
+        val response = ApiClient.getInstance().provideRetrofitClient().create(GraphQLService::class.java).postGetMovies(paramObject.toString())
+        val jsonBody = response.body()
+        val data = Gson().fromJson(jsonBody, MovieResponse::class.java)
+        return if (data != null) {
+            Result.Success(data.data.movie)
+        } else {
+            Result.Error(java.lang.Exception())
+        }
+    }
+
     suspend fun getMovies(filter: String?): Result<List<MovieEntity>?> {
         val paramObject = JSONObject()
         paramObject.put(
@@ -23,7 +39,7 @@ class Repo {
 
         val response = ApiClient.getInstance().provideRetrofitClient().create(GraphQLService::class.java).postGetMovies(paramObject.toString())
         val jsonBody = response.body()
-        val data = Gson().fromJson(jsonBody, MovieResponse::class.java)
+        val data = Gson().fromJson(jsonBody, MoviesResponse::class.java)
         return if (data != null) {
             Result.Success(data.data.movies)
         } else {

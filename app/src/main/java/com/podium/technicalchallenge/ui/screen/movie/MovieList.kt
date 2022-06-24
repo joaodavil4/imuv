@@ -12,15 +12,18 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.podium.technicalchallenge.R
 import com.podium.technicalchallenge.ui.components.CardItem
+import com.podium.technicalchallenge.ui.navigation.NavDestinations.MOVIE_DETAIL
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MovieList(
-    viewModel: MovieViewModel
+    viewModel: MovieViewModel,
+    navController: NavController
 ) {
     val isRefreshing by viewModel.isRefreshing.observeAsState(false)
     val movies by viewModel.items.observeAsState(listOf())
@@ -29,7 +32,7 @@ fun MovieList(
     val selectedFilter by viewModel.selectedFilter.observeAsState("All")
     val selectedGenre by viewModel.selectedGenre.observeAsState("")
     val genres by viewModel.genres.observeAsState(listOf())
-    val top5 by viewModel.top5Filter.observeAsState(false)
+
     viewModel.refresh()
     viewModel.getGenres()
 
@@ -98,6 +101,8 @@ fun MovieList(
                                 description = item.overview,
                                 tags = item.genres
                             ) {
+                                viewModel.selectedEntity.value = item
+                                navController.navigate(MOVIE_DETAIL)
                             }
                         }
                     }

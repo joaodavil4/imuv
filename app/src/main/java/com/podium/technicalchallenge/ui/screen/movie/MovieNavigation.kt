@@ -17,7 +17,11 @@ fun MovieNavigation(
     val viewModel = viewModel<MovieViewModel>()
     NavHost(navController = navController, startDestination = NavDestinations.MOVIE_LIST) {
         composable(NavDestinations.MOVIE_LIST) {
-            MovieList(viewModel)
+            MovieList(viewModel, navController)
+        }
+
+        composable(NavDestinations.MOVIE_DETAIL) {
+            MovieDetail(viewModel, navController)
         }
     }
 }
